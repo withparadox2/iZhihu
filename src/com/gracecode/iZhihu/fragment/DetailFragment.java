@@ -1,10 +1,21 @@
 package com.gracecode.iZhihu.fragment;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import taobe.tec.jcc.JChineseConvertor;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -16,21 +27,19 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.webkit.*;
+import android.webkit.ConsoleMessage;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.webkit.WebViewFragment;
+
 import com.gracecode.iZhihu.R;
+import com.gracecode.iZhihu.activity.ShowImageActivity;
 import com.gracecode.iZhihu.dao.Question;
 import com.gracecode.iZhihu.db.ThumbnailsDatabase;
 import com.gracecode.iZhihu.util.Helper;
-import taobe.tec.jcc.JChineseConvertor;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @SuppressLint("ValidFragment")
 public class DetailFragment extends WebViewFragment {
@@ -114,6 +123,7 @@ public class DetailFragment extends WebViewFragment {
 
             getWebView().pageDown(true);
             UIChangedChangedHandler.sendEmptyMessage(INITIAL_VIEW);
+            addImageClickListner();
         }
 
         @Override
@@ -122,6 +132,35 @@ public class DetailFragment extends WebViewFragment {
             return true;
         }
     };
+    
+    private void addImageClickListner() {  
+        getWebView().loadUrl("javascript:(function(){" +  
+	        "var objs = document.getElementsByTagName('img'); " +
+	        "for(var i=0;i<objs.length;i++) {" +
+	        	"objs[i].onclick=function() {" +
+	        		"window.imagelistner.openImage(this.src);" +
+	        	"}  " +   
+	        "}" +   
+        "})()");  
+    }  
+    
+    public class JavascriptInterfaceCallback {  
+        private Context context;  
+  
+        public JavascriptInterfaceCallback(Context context) {  
+            this.context = context;  
+        }  
+        
+		@JavascriptInterface
+        public void openImage(String img) {  
+            System.out.println(img);  
+            //  
+            Intent intent = new Intent();  
+            intent.putExtra("url", img);  
+            intent.setClass(context, ShowImageActivity.class);  
+            context.startActivity(intent);  
+        }  
+    }  
 
     private final Runnable genScreenShots = new Runnable() {
         @Override
@@ -214,8 +253,8 @@ public class DetailFragment extends WebViewFragment {
 
 //        webSettings.setLoadWithOverviewMode(true);
 //        webSettings.setUseWideViewPort(true);
-        webSettings.setJavaScriptEnabled(false);
-
+        webSettings.setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new JavascriptInterfaceCallback(getActivity()), "imagelistner");  
         // Load page from generated HTML string.
         webView.loadDataWithBaseURL(URL_ASSETS_PREFIX, getFormatedContent(),
                 MIME_HTML_TYPE, Helper.DEFAULT_CHARSET, null);
@@ -436,7 +475,6 @@ public class DetailFragment extends WebViewFragment {
             }
         });
         animator.start();
-//        getWebView().scrollTo(0, scrollY);
     }
 
     public void nextPage() {

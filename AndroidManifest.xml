@@ -46,6 +46,10 @@
                 />
         <activity
                 android:screenOrientation="portrait"
+                android:name=".activity.ShowImageActivity"
+                />
+        <activity
+                android:screenOrientation="portrait"
                 android:name=".activity.Comment"
                 />
         <activity
