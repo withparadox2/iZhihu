@@ -124,7 +124,7 @@ public class DetailFragment extends WebViewFragment {
                 new Thread(genScreenShots).start();
             }
 
-            getWebView().pageDown(true);
+//            getWebView().pageDown(true);
             UIChangedChangedHandler.sendEmptyMessage(INITIAL_VIEW);
             addImageClickListner();
         }
