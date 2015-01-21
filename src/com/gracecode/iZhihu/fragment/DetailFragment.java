@@ -20,12 +20,15 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Picture;
+import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
@@ -227,12 +230,13 @@ public class DetailFragment extends WebViewFragment {
             e.printStackTrace();
         }
     }
+    
+    
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        this.activity = getActivity();
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = super.onCreateView(inflater, container, savedInstanceState);
+		this.activity = getActivity();
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         thumbnailsDatabase = new ThumbnailsDatabase(context);
 
@@ -251,8 +255,8 @@ public class DetailFragment extends WebViewFragment {
         WebView webView = getWebView();
         WebSettings webSettings = webView.getSettings();
 
-//        webSettings.setLoadWithOverviewMode(true);
-//        webSettings.setUseWideViewPort(true);
+//	        webSettings.setLoadWithOverviewMode(true);
+//	        webSettings.setUseWideViewPort(true);
         webSettings.setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new JavascriptInterfaceCallback(getActivity()), "imagelistner");  
         // Load page from generated HTML string.
@@ -267,6 +271,12 @@ public class DetailFragment extends WebViewFragment {
             }
         });
         webView.setVisibility(View.INVISIBLE);
+        return view;
+	}
+
+	@Override
+    public void onResume() {
+        super.onResume();
     }
 
     private File getCachedFile() {
