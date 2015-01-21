@@ -212,7 +212,7 @@ public class PreferencesFragment extends PreferenceFragment {
 
             try {
                 // Create a file instance from the URI
-                final File file = FileUtils.getFile(uri);
+                final File file = FileUtils.getFile(getActivity(), uri);
 
                 switch (requestCode) {
                     case R.string.key_custom_fonts:

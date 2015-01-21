@@ -2,6 +2,7 @@ package com.gracecode.iZhihu.fragment;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -31,6 +32,7 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressLint("ValidFragment")
 public class DetailFragment extends WebViewFragment {
     private static final String TAG = DetailFragment.class.getName();
     private static final String KEY_SCROLL_BY = "key_scroll_by_";
@@ -210,8 +212,8 @@ public class DetailFragment extends WebViewFragment {
         WebView webView = getWebView();
         WebSettings webSettings = webView.getSettings();
 
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
+//        webSettings.setLoadWithOverviewMode(true);
+//        webSettings.setUseWideViewPort(true);
         webSettings.setJavaScriptEnabled(false);
 
         // Load page from generated HTML string.
